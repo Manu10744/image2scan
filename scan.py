@@ -41,8 +41,10 @@ if __name__ == '__main__':
                      "path is correct.")
         raise SystemExit(1)
 
-    if destination is not None:
-        pass
+    if not os.path.exists(destination):
+        logger.error("Cannot save the scan at the given destination path because it does not exist. "
+                     "Please make sure to specify a path to an existing directory.")
+        raise SystemExit(1)
 
-    scanner = ImageScanner(image, show_results)
+    scanner = ImageScanner(image, destination, show_results)
     scanner.scan()

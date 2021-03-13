@@ -2,6 +2,8 @@ import cv2
 import imutils
 import logging
 import numpy as np
+import os
+
 from skimage.filters import threshold_local
 
 
@@ -20,17 +22,24 @@ class ImageScanner:
     """ Scanner that applies edge detection in order to scan an ordinary image into a grayscale scan
         while positioning the point of view accordingly if needed. """
 
-    def __init__(self, image, show_results):
+    def __init__(self, image, destination, show_results):
         """
         :param image: Path to the image to scan
         :param show_results: Specifies whether to show intermediate results in GUI windows or not
         """
         self.image = image
+        self.destination = destination
         self.show_results = show_results
 
     def scan(self):
-        screenCnt = self.__analyze_contours()
-        self.__apply_perspective_transform(screenCnt)
+        """ Scans the document in the given image and saves the result in the destination directory """
+        screenContours = self.__analyze_contours()
+        scan_img = self.__transform_and_scan(screenContours)
+
+        logger.info("Saving Scan in {}".format(self.destination))
+        destination_path = os.path.join(self.destination, "scanresult.jpg")
+
+        cv2.imwrite(destination_path, scan_img)
 
     def __analyze_contours(self):
         """ Transforms the image to black and white in a way so that only the edges become clearly visible. """
@@ -70,7 +79,7 @@ class ImageScanner:
 
         return screenCnt
 
-    def __apply_perspective_transform(self, screenCnt):
+    def __transform_and_scan(self, screenCnt):
         cv2_image = cv2.imread(self.image)
         ratio = cv2_image.shape[0] / 500.0
         transformed = self.__four_point_transform(cv2_image, screenCnt.reshape(4, 2) * ratio)
@@ -82,6 +91,8 @@ class ImageScanner:
         if self.show_results:
             self.__show_intermediate_result("Original Image", imutils.resize(cv2_image, height=650))
             self.__show_intermediate_result("Scanning Result", imutils.resize(transformed_grayscaled, height=650))
+
+        return transformed_grayscaled
 
     def __order_points(self, pts):
         # initialzie a list of coordinates that will be ordered such that the first entry in the list is the top-left,
