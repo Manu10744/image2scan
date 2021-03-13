@@ -29,10 +29,17 @@ if __name__ == '__main__':
     argparser = setup_argparser()
     args = argparser.parse_args()
 
-    if args.dest is not None:
+    # Parsed arguments
+    image = args.image
+    destination = args.dest
+    show_results = args.show_results
+
+    logger.info("Image: {}".format(image))
+    logger.info("Destination: {}".format(destination))
+    logger.info("Showing Results: {}".format(show_results))
+
+    if destination is not None:
         pass
 
-    image = args.image
-
-    logger.info("Processing image: {}".format(image))
-    scanner = ImageScanner(image)
+    scanner = ImageScanner(image, show_results)
+    scanner.scan()
