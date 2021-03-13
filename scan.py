@@ -8,9 +8,7 @@
 """
 
 import logging
-import numpy as np
-import imutils
-import cv2
+import os
 
 from ImageScanner import ImageScanner
 from utils.argparsing import setup_argparser
@@ -21,7 +19,7 @@ logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
 handler.setLevel(logging.INFO)
 
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s | >>> %(message)s")
+formatter = logging.Formatter("%(asctime)s - %(name)s | [%(levelname)s] %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
@@ -37,6 +35,11 @@ if __name__ == '__main__':
     logger.info("Image: {}".format(image))
     logger.info("Destination: {}".format(destination))
     logger.info("Showing Results: {}".format(show_results))
+
+    if not os.path.exists(image):
+        logger.error("The image on the given path could not be found! Please make sure the given file exists and its "
+                     "path is correct.")
+        raise SystemExit(1)
 
     if destination is not None:
         pass
