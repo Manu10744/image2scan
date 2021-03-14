@@ -3,6 +3,7 @@ import imutils
 import logging
 import numpy as np
 import os
+import img2pdf
 
 from skimage.filters import threshold_local
 from datetime import date
@@ -33,19 +34,16 @@ class ImageScanner:
         self.show_results = show_results
 
     def scan_and_save(self):
-        """ Scans the document in the given image and saves the result in the destination directory """
+        """ Searches for an rectangular object in the given image and saves the scan result of that object
+        in the destination directory as pdf file """
         screenContours = self.__analyze_contours()
         scan_img = self.__transform_and_scan(screenContours)
 
-        logger.info("Saving Scan in {}".format(self.destination))
-        file = os.path.basename(self.image)
-        filename, ext = os.path.splitext(file)
-        destination_path = os.path.join(self.destination, f"{date.today()}-scanresult-{filename}.jpg")
-
-        cv2.imwrite(destination_path, scan_img)
+        # Save the image as PDF
+        self.__save_as_pdf(scan_img)
 
     def __analyze_contours(self):
-        """ Transforms the image to black and white in a way so that only the edges become clearly visible. """
+        """ Transforms the image colors to black and white in a way so that only the edges become clearly visible. """
         cv2_image = cv2.imread(self.image)
         cv2_image = imutils.resize(cv2_image, height=500)
 
@@ -83,6 +81,7 @@ class ImageScanner:
         return screenCnt
 
     def __transform_and_scan(self, screenCnt):
+        """ Transforms the perspective to a top-down view and creates the scan from the transformed image. """
         cv2_image = cv2.imread(self.image)
         ratio = cv2_image.shape[0] / 500.0
         transformed = self.__four_point_transform(cv2_image, screenCnt.reshape(4, 2) * ratio)
@@ -147,6 +146,29 @@ class ImageScanner:
 
         # return the warped image
         return warped
+
+    def __save_as_pdf(self, img_data):
+        """
+        Saves the resulting scan image as PDF inside the specified destination directory.
+        :param img_data:  Numpy Array containing the scan image data
+        """
+        logger.info("Saving Scan in {} as PDF".format(self.destination))
+
+        img_file = os.path.basename(self.image)
+        img_filename, ext = os.path.splitext(img_file)
+
+        # Create the scan image in order to create PDF from it afterwards
+        cv2.imwrite(f"{os.getcwd()}/result.jpg", img_data)
+
+        # Specifying DIN A4 format
+        din_a4_format = (img2pdf.mm_to_pt(210), img2pdf.mm_to_pt(297))
+        layout_fun = img2pdf.get_layout_fun(din_a4_format)
+
+        pdf_filename = f"{date.today()}-scan-{img_filename}"
+        with open(f"{self.destination}/{pdf_filename}.pdf", "wb") as pdf_file:
+            pdf_file.write(img2pdf.convert("result.jpg", layout_fun=layout_fun))
+
+        os.remove('result.jpg')
 
     def __show_intermediate_result(self, title, image):
         """ Shows an intermediate image processing step using a GUI window.

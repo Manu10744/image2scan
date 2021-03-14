@@ -1,3 +1,4 @@
+img2pdf
 numpy
 imutils
 opencv-python
