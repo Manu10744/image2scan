@@ -32,6 +32,7 @@ class ImageScanner:
         self.image = image
         self.destination = destination
         self.show_results = show_results
+        self.user_defined_contours = []
 
     def scan_and_save(self):
         """ Searches for an rectangular object in the given image and saves the scan result of that object
@@ -70,15 +71,36 @@ class ImageScanner:
                 screenCnt = approximation
                 break
 
+        # If OpenCV failed to detect 4 edges, let the user choose 4 points
         if screenCnt is None:
-            logger.error("No rectangular object could be detected on the given image.")
-            raise SystemExit(1)
+            logger.warning("Failed to detect 4 edges. Please choose 4 points to determine the object to be scanned.")
+            while True:
+                cv2.namedWindow("Select 4 Points and click on 'X'")
+                cv2.setMouseCallback("Select 4 Points and click on 'X'", self.__select_points)
+                cv2.imshow("Select 4 Points and click on 'X'", cv2_image)
+                cv2.waitKey(0) & 0xFF
 
-        elif self.show_results:
+                if len(self.user_defined_contours) == 4:
+                    break
+            
+            # Transform the user defined points into a numpy array which openCV expects
+            screenCnt = np.array(self.user_defined_contours)
+
+        if self.show_results:
             cv2.drawContours(cv2_image, [screenCnt], -1, (0, 255, 0), 2)
             self.__show_intermediate_result("Outlined Image", cv2_image)
 
         return screenCnt
+
+    def __select_points(self, event, x, y, flags, param):
+        """ Event Handler for click events which lets the user define 4 points in order to determine the
+        object to be scanned when OpenCV itself failed to detect 4 edges
+        :param x:  x-coordinate of the clicked point
+        :param y:  y-coordinate of the clicked point
+        """
+        if event == cv2.EVENT_LBUTTONDOWN:
+            if len(self.user_defined_contours) != 4:
+                self.user_defined_contours.append([x, y])
 
     def __transform_and_scan(self, screenCnt):
         """ Transforms the perspective to a top-down view and creates the scan from the transformed image. """
