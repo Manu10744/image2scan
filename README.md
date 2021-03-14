@@ -10,14 +10,20 @@ It fails on images where the contrast is not sufficient to detect the edges or w
 ### Usage
 The program can be applied on an image:
  
- `$ py scan.py --image <path_to_your_image>`.
+ ```bash
+$ py scan.py --image <PATH_TO_IMAGE>
+```
 
 The directory for saving the scan PDF can be specified as well:
-`$ py scan.py --image <path_to_your_image> --dest <path_to_directory>`
+```bash
+$ py scan.py --image <PATH_TO_IMAGE> --dest <PATH_TO_DIR>
+```
  
 If you want to check what its doing, you can also tell it to visualize the intermediate results in a GUI:
  
- `$ py scan.py --image <path_to_your_image> --show-results`.
+ ```
+ $ py scan.py --image <PATH_TO_IMAGE> --show-results
+```
 
 ### Installation
 `$ pip install -r requirements.txt`
