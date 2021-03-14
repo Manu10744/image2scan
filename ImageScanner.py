@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 from skimage.filters import threshold_local
-
+from datetime import date
 
 logger = logging.getLogger("SCANNER")
 logger.setLevel(logging.INFO)
@@ -25,19 +25,22 @@ class ImageScanner:
     def __init__(self, image, destination, show_results):
         """
         :param image: Path to the image to scan
+        :param destination:  Path to destination directory to store the scan result in
         :param show_results: Specifies whether to show intermediate results in GUI windows or not
         """
         self.image = image
         self.destination = destination
         self.show_results = show_results
 
-    def scan(self):
+    def scan_and_save(self):
         """ Scans the document in the given image and saves the result in the destination directory """
         screenContours = self.__analyze_contours()
         scan_img = self.__transform_and_scan(screenContours)
 
         logger.info("Saving Scan in {}".format(self.destination))
-        destination_path = os.path.join(self.destination, "scanresult.jpg")
+        file = os.path.basename(self.image)
+        filename, ext = os.path.splitext(file)
+        destination_path = os.path.join(self.destination, f"{date.today()}-scanresult-{filename}.jpg")
 
         cv2.imwrite(destination_path, scan_img)
 
@@ -89,7 +92,6 @@ class ImageScanner:
         transformed_grayscaled = (transformed_grayscaled > threshold).astype("uint8") * 255
 
         if self.show_results:
-            self.__show_intermediate_result("Original Image", imutils.resize(cv2_image, height=650))
             self.__show_intermediate_result("Scanning Result", imutils.resize(transformed_grayscaled, height=650))
 
         return transformed_grayscaled

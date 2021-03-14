@@ -47,4 +47,4 @@ if __name__ == '__main__':
         raise SystemExit(1)
 
     scanner = ImageScanner(image, destination, show_results)
-    scanner.scan()
+    scanner.scan_and_save()
