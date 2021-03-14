@@ -7,6 +7,9 @@ It even works on images where the angle of the document inside the image is obli
 
 Generally, it performs good on images with enough contrast regarding the image and the rectangular object inside the image. 
 It fails on images where the contrast is not sufficient to detect the edges or when there is no rectangular object (like a piece of paper) at all.
+
+If it fails to detect 4 edges, the user is asked to define 4 points in order to determine the object to be scanned.
+
 ### Usage
 The program can be applied on an image:
  

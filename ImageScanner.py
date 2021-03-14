@@ -82,7 +82,7 @@ class ImageScanner:
 
                 if len(self.user_defined_contours) == 4:
                     break
-            
+
             # Transform the user defined points into a numpy array which openCV expects
             screenCnt = np.array(self.user_defined_contours)
 
