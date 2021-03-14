@@ -10,6 +10,9 @@ It fails on images where the contrast is not sufficient to detect the edges or w
 
 If it fails to detect 4 edges, the user is asked to define 4 points in order to determine the object to be scanned.
 
+<img src="./img/outlined.JPG" width="250px" height="250px" alt="Outlined">
+<img src="./img/scanned.JPG.JPG" width="250px" height="250px" alt="Scanned">
+
 ### Usage
 The program can be applied on an image:
  
