@@ -74,14 +74,15 @@ class ImageScanner:
         # If OpenCV failed to detect 4 edges, let the user choose 4 points
         if screenCnt is None:
             logger.warning("Failed to detect 4 edges. Please choose 4 points to determine the object to be scanned.")
-            while True:
-                cv2.namedWindow("Select 4 Points and click on 'X'")
-                cv2.setMouseCallback("Select 4 Points and click on 'X'", self.__select_points)
-                cv2.imshow("Select 4 Points and click on 'X'", cv2_image)
-                cv2.waitKey(0) & 0xFF
+            cv2.namedWindow("Select 4 Points and click on 'X'")
+            cv2.setMouseCallback("Select 4 Points and click on 'X'", self.__select_points, cv2_image)
 
-                if len(self.user_defined_contours) == 4:
-                    break
+            while len(self.user_defined_contours) != 4:
+                cv2.imshow("Select 4 Points and click on 'X'", cv2_image)
+                cv2.waitKey(1)
+
+            logger.info("Point selection completed!")
+            cv2.destroyAllWindows()
 
             # Transform the user defined points into a numpy array which openCV expects
             screenCnt = np.array(self.user_defined_contours)
@@ -92,15 +93,18 @@ class ImageScanner:
 
         return screenCnt
 
-    def __select_points(self, event, x, y, flags, param):
+    def __select_points(self, event, x, y, flags, image):
         """ Event Handler for click events which lets the user define 4 points in order to determine the
         object to be scanned when OpenCV itself failed to detect 4 edges
         :param x:  x-coordinate of the clicked point
         :param y:  y-coordinate of the clicked point
         """
         if event == cv2.EVENT_LBUTTONDOWN:
-            if len(self.user_defined_contours) != 4:
-                self.user_defined_contours.append([x, y])
+            logger.info("Selected Point at ({}|{})".format(x, y))
+            cv2.drawMarker(image, (x, y), (0, 0, 255), markerType=cv2.MARKER_STAR,
+                           markerSize=10, thickness=1, line_type=cv2.LINE_AA)
+
+            self.user_defined_contours.append([x, y])
 
     def __transform_and_scan(self, screenCnt):
         """ Transforms the perspective to a top-down view and creates the scan from the transformed image. """
