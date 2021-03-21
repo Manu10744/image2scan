@@ -12,10 +12,10 @@ If it fails to detect 4 edges, the user is asked to define 4 points in order to 
 
 ### Steps
 #### Determining the object
-<img src="./img/outlined.JPG" width="250px" height="250px" alt="Outlined" />
+<img src="./docs/img/outlined.JPG" width="250px" height="250px" alt="Outlined" />
 
 #### Transforming perspective and scan
-<img src="./img/scanned.JPG" width="250px" height="350px" alt="Scanned" />
+<img src="./docs/img/scanned.JPG" width="250px" height="350px" alt="Scanned" />
 
 ### Usage
 The program can be applied on an image:
