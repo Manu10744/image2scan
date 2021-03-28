@@ -15,15 +15,42 @@
 
     <body>
         <div class="container">
-            <div class="intro-container">
-                <h1>Image2Scan</h1>
-                <h3>An Online Image-To-PDF Scanner.</h3>
-                <h5>Upload an image using drag-and-drop or by opening up the selection dialog and obtain a scan result of it.</h5>
-            </div>
+            <div class="upload-wrapper">
+                <div class="intro-container">
+                    <h1>Image2Scan</h1>
+                    <h3>An Online Image-To-PDF Scanner.</h3>
+                    <h5>Upload an image using drag-and-drop or by opening up the selection dialog and obtain a scan result of it.</h5>
+                </div>
 
-            <div class="upload-container">
-                <span>Please upload a file.</span>
-                <input type="file">
+                <div class="upload-container">
+                    <form>
+                        <label class="upload-dragzone animated" for="file-upload">
+                            <!-- <img class="upload-icon" src="../static/img/cloud-upload-signal-svgrepo-com.svg"> -->
+                            <img class="upload-icon" src="./img/cloud-upload-signal-svgrepo-com.svg">
+                        </label>
+                        <span class="filename">No file uploaded, yet!</span>
+                        <input id="file-upload" type="file" multiple>
+
+                        <div class="button-container">
+                            <button class="upload-btn" type="submit">Upload</button>
+                            <a class="reset-btn">Reset Selection</a>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="selected-files-container">
+                    <h1>Selected Files</h1>
+                    <table class="selected-files-table">
+                        <tr class="table-heading-row">
+                            <th>Filename</th>
+                            <th>Uploaded</th>
+                        </tr>
+                        <tr>
+                            <td>MyImage.jpg</td>
+                            <td>Yes</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
     
